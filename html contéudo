@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercado Livre - Protótipo Estudo</title> 
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">pagar 0800</a>
+            
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Buscar produtos, marcas e muito mais...">
+                <button id="searchButton">🔍</button>
+            </div>
+
+            <div class="cart-status">
+                🛒 Carrinho: <strong id="cartCount">0</strong>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTEÚDO -->
+    <main>
+        <h2 class="section-title">Inspirado no seu último histórico</h2>
+        
+        <!-- Grid onde o JavaScript vai inserir os produtos -->
+        <div class="products-grid" id="productsGrid"></div>
+    </main>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // 1. Banco de dados simulado (Array de Objetos)
+        const productsData = [
+            { id: 1, title: "Smartphone M50 Pro 128GB 5G Câmera Tripla", price: 1499, emoji: "📱", freeShipping: true },
+            { id: 2, title: "Notebook UltraFast Intel i7 16GB RAM SSD 512GB", price: 4299, emoji: "💻", freeShipping: true },
+            { id: 3, title: "Fone de Ouvido Bluetooth Noise Cancelling", price: 289, emoji: "🎧", freeShipping: false },
+            { id: 4, title: "Smartwatch Sport Series 8 Pro À Prova D'água", price: 199, emoji: "⌚", freeShipping: true },
+            { id: 5, title: "Cadeira Gamer Ergonômica Reclinável Preta", price: 849, emoji: "🪑", freeShipping: false },
+            { id: 6, title: "Console de Videogame NextGen 1TB + 2 Controles", price: 3999, emoji: "🎮", freeShipping: true }
+        ];
+
+        // 2. Variável de estado do carrinho
+        let cartItemsCount = 0;
+
+        // 3. Elementos do DOM capturados
+        const productsGrid = document.getElementById('productsGrid');
+        const cartCountEl = document.getElementById('cartCount');
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+
+        // 4. Função para renderizar (mostrar) os produtos na tela
+        function displayProducts(products) {
+            // Limpa o grid antes de desenhar
+            productsGrid.innerHTML = "";
+
+            if(products.length === 0) {
+                productsGrid.innerHTML = "<p>Nenhum produto encontrado.</p>";
+                return;
+            }
+
+            // Mapeia e cria a estrutura HTML de cada produto
+            products.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+
+                // Verifica se tem frete grátis para exibir a etiqueta correta
+                const shippingTag = product.freeShipping ? `<p class="product-shipping">Frete grátis</p>` : '';
+
+                card.innerHTML = `
+                    <div class="product-image">${product.emoji}</div>
+                    <div class="product-info">
+                        <div>
+                            <div class="product-price">R$ ${product.price.toLocaleString('pt-BR')}</div>
+                            ${shippingTag}
+                            <div class="product-title">${product.title}</div>
+                        </div>
+                        <button class="btn-buy" onclick="addToCart()">Adicionar</button>
+                    </div>
+                `;
+                productsGrid.appendChild(card);
+            });
+        }
+
+        // 5. Função para adicionar item ao carrinho
+        function addToCart() {
+            cartItemsCount++;
+            cartCountEl.textContent = cartItemsCount;
+            alert("Produto adicionado ao carrinho com sucesso!");
+        }
+
+        // 6. Função de busca/filtro
+        function filterProducts() {
+            const term = searchInput.value.toLowerCase();
+            const filtered = productsData.filter(product => 
+                product.title.toLowerCase().includes(term)
+            );
+            displayProducts(filtered);
+        }
+
+        // 7. Eventos de busca (clique no botão ou apertar Enter)
+        searchButton.addEventListener('click', filterProducts);
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') filterProducts();
+        });
+
+        // Inicialização: Mostra todos os produtos ao carregar a página
+        displayProducts(productsData);
+    </script>
+</body>
+</html>
+
